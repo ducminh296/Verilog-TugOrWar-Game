@@ -1,38 +1,17 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:     
-// Design Name: 
-// Module Name:    
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
 
-module DIV1024(clk, rst, slowen1024);
+module div1024(clk,rst, slowen1024);
 
-	input clk, rst;
+	input clk,rst;
 	output slowen1024;
 
-	reg[9:0] counter;
+	reg[9:0] slowen_count;
 
-	always @(posedge clk or posedge rst)
+	always @(posedge clk or posedge rst) 
 	begin
-		if(rst) counter <= 10'b0000000000;
-		else counter <= counter+1;
+		if (rst) slowen_count<=9'b000000000;
+		else slowen_count<=slowen_count+1;
 	end
 
-	assign slowen1024 = &counter;
-
+	assign slowen1024=&slowen_count;
 endmodule
-	

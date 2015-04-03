@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
+// Company: Dijiji
 // Engineer: GROUP 25
 // 
-// Create Date:   
+// Create Date:    11:48:15 12/04/2014 
 // Design Name: 
 // Module Name:    clk_div 
 // Project Name: 
@@ -17,7 +17,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module clk_div(CLK_I,rst, clk );
+module clk_div(CLK_I,rst,clk);
 
 // input port
 input CLK_I,rst;

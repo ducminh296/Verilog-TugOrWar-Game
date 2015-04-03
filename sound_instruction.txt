@@ -1,0 +1,59 @@
+FOR MINH
+
+TO GET SOUND WORKING:
+
+ADD THIS IN atlys.ucf:
+
+# onBoard Pins
+ NET "sound_out" LOC = "T3"; # Bank = 2, Pin name = IO_L62N_D6, 	   Sch name = JA-D0_N
+ NET "gain" LOC = "R3"; # Bank = 2, Pin name = IO_L62P_D5, 	   Sch name = JA_D0_P
+ NET "shutdown" LOC = "N5"; # Bank = 1, Pin name = IO_L64P_D8, 	   Sch name = JA_D2_P
+ 
+ 
+ --------------------
+ In the top module add these:
+ 
+ output sound_out,
+	output gain,
+	output shutdown
+	
+----------
+
+Create a module to generate the sound
+
+module beep(clk, hit, win, gain, shutdown, sound_out);
+input clk;
+input hit, win;
+
+output gain, shutdown;
+output sound_out;
+
+reg gain, shutdown, sound_out;
+
+reg[17:0] counter = 0;
+reg[25:0] tone = 0;
+
+always@(posedge clk)tone <= tone+1;
+
+
+wire [6:0] ramp = (tone[25] ? tone[24:18]: ~tone[24:18]);
+wire [17:0] clkdiv = {2'b01, ramp, 6'b000000};
+ 
+always@(posedge clk) begin
+	if (counter == 0) begin
+		counter <= clkdiv;
+	end 
+	else begin 
+		counter <= counter - 1;
+	end
+end
+
+always@(posedge clk) begin 
+	if(counter == 0) begin
+	sound_out <= ~sound_out;
+	end 
+	shutdown <= win;
+	gain <= 1;
+end
+
+endmodule

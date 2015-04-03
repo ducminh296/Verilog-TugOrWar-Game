@@ -1,35 +1,18 @@
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:  
-// Design Name: 
-// Module Name:    PushButtonLatch
-// Project Name: 	Group 25
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision:  - File Created
-//
-//////////////////////////////////////////////////////////////////////////////////
-module PushButtonLatch( pbl, pbr, rst, clear, push, tie, right);
-	input pbl, pbr, rst, clear;
-	output push, tie, right;
+module PBL(push,tie,right,pbl,pbr,rst,clr);
+
+	input pbl,pbr,rst,clr;
+	output push,tie,right;
+
+	wire push,tie,right,pbl,pbr,rst,clr,pbl1,pbr1,G,H;
+
+	assign pbl1 = pbl & ~G;
+	assign pbr1 = pbr & ~H;
+
+	rs_latch pbl_latch(G,pbl1,rst,clr);
+	rs_latch pbr_latch(H,pbr1,rst,clr);
+
+	assign push=G|H;
+	assign tie=G&H;
+	assign right=H&~G;
 	
-	wire G, H;
-	
-	assign leftX = pbl & (~H);
-	RSLatch leftLatch( .trigger(leftX), .rst(rst), .clear(clear), .Q(G) );
-	
-	assign rightX = pbr & (~G);
-	RSLatch rightLatch( .trigger(rightX), .rst(rst), .clear(clear), .Q(H) );
-	
-	assign push = G | H;
-	assign tie = G & H;
-	assign right = H & ~G;
-	
-endmodule	
+endmodule

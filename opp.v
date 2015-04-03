@@ -1,33 +1,14 @@
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:  
-// Design Name: 
-// Module Name:    OPP
-// Project Name: 	Group 25
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision:  - File Created
-// Additional Comments: 
-//////////////////////////////////////////////////////////////////////////////////
-module OPP( sypush, clk, rst, winrnd );
-	input sypush, clk, rst;
+module OPP(winrnd,sypush,clk,rst);
+	input sypush,clk,rst;
 	output winrnd;
-	
-	wire winrnd;
-	reg sypushQ;
-	
-	always @ ( posedge clk or posedge rst )
+	wire sypush,clk,rst,winrnd;
+	reg Q;
+
+	assign winrnd=sypush&~Q;
+
+	always @(posedge clk or posedge rst)
 	begin
-		if (rst) sypushQ <= 0;
-		else sypushQ <= sypush;
+		if (rst) Q<=0;
+		else Q<=sypush;
 	end
-	
-	assign winrnd = sypush & ~sypushQ;
-endmodule 
+endmodule

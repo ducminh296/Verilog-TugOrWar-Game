@@ -22,8 +22,11 @@ NET "CLK_I" LOC = L15;
  
  NET "rst" LOC = "F5" ;  # Bank = 3, Pin name = IO_L55N_M3A14, 	   Sch name = BTNC
  
+# onBoard speaker output
 
-
+#NET "audio_input" LOC = "T3"; # Bank = 2, Pin name = IO_L62N_D6, 	   Sch name = JA-D0_N
+#NET "gain" LOC = "R3"; # Bank = 2, Pin name = IO_L62P_D5, 	   Sch name = JA_D0_P
+#NET "shutdown" LOC = "N5"; # Bank = 1, Pin name = IO_L64P_D8, 	   Sch name = JA_D2_P
 
  //NET "Btest" LOC = "P3";  # Bank = 3, Pin name = IO_L2N, 	   		   Sch name = BTND
 

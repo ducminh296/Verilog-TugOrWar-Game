@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
+// Company: 
+// Engineer: 
 // 
-// Create Date:   
+// Create Date:    17:35:05 03/30/2011 
 // Design Name: 
 // Module Name:    pushCounter 
 // Project Name: 
@@ -34,23 +34,21 @@ reg[7:0] count_right, count_left;
 reg right, tie;
 
 //Synchronize our input signals
-Sync create_pblSync(pbl,clk,rst,pblSync);
-Sync create_pbrSync(pbr, clk, rst, pbrSync);     //Code completed here
+SYNC create_pblSync(.push(pbl),.clk(clk),.rst(rst),.sypush(pblSync));
+OPP createPBL_pulse(.sypush(pblSync),.clk(clk),.rst(rst),.winrnd(PBL_pulse));
 
 //Create one pulse per push for each signal
-OPP createPBL_pulse(pblSync, clk, rst, PBL_pulse); //Code completed here
-OPP createPBR_pulse(pbrSync,clk,rst,PBR_pulse);
+SYNC create_pbrSync(.push(pbr),.clk(clk),.rst(rst),.sypush(pbrSync));
+OPP createPBR_pulse(.sypush(pbrSync),.clk(clk),.rst(rst),.winrnd(PBR_pulse));
 
 //LEFT COUNTER
-//Code Completed
-always@ (posedge clk or posedge rst)
+always@(posedge clk or posedge rst)
 begin
-	if(rst) count_left<=0;
-	else if(speedExit) count_left<=0;
+	if(rst)count_left<=0;
+	else if(speedExit)count_left<=0;
 	else if(PBL_pulse & speedRound) count_left <= count_left+1;
 	else count_left <= count_left;
 end
-
 
 //RIGHT COUNTER
 always@(posedge clk or posedge rst)
@@ -64,13 +62,16 @@ end
 //COMPARE counters at end of speedRound
 always@(posedge clk)
 begin
-	if( count_right > count_left  )begin right=1; tie=0;end //Code completed
-	else if(count_right == count_left)begin right=0; tie=1;end
+	if(count_right > count_left )begin right=1; tie=0;end
+	else if (count_right==count_left) begin right=0;tie=0; end
 	else begin right=0; tie=0;end
 end
 
 //Output counter results
 assign speed_right = right;
-assign speed_tie = tie; //Code Completed
+assign speed_tie = tie;
 
 endmodule
+
+		
+		

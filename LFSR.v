@@ -1,38 +1,23 @@
- `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:  
-// Design Name: 
-// Module Name:    LFSR
-// Project Name: 	Group 25
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision:  - File Created
-// Additional Comments:
-//////////////////////////////////////////////////////////////////////////////////
- module LFSR(input clk, input rst, output rand, output randFake, output randSpeed);
- 
- reg [9:0] LFSR;
- 
- always @(posedge clk or posedge rst)begin
- 
-	if(rst) LFSR<=10'b1111111111;
-	else begin
-		LFSR[8:0]<=LFSR[9:1];
-		LFSR[9]<=LFSR[9]^LFSR[2];
+`timescale 1ns / 1ps
+
+module lfsr(clk,rst,rand,randFake,randSpeed);
+	
+	input clk,rst;
+	output rand,randFake,randSpeed;
+
+	reg[9:0] Q;
+
+	always @(posedge clk or posedge rst)
+	begin
+		if (rst) Q<=10'b1111111111;
+		else begin
+				Q[8:0]<=Q[9:1];
+				Q[9]<=Q[2]^Q[5];
+			end
 	end
- 
- end
- 
- assign rand = LFSR[2];
- assign randFake = LFSR[0] & LFSR[8];
- assign randSpeed = LFSR[5] & LFSR[1];
- 
- endmodule
+
+	assign rand=Q[2];
+	
+	assign randFake=Q[6]&Q[3];
+	assign randSpeed=Q[8]&Q[4];
+endmodule

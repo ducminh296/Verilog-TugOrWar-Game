@@ -1,38 +1,17 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:   
-// Design Name: 
-// Module Name:    DIV256
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
 
-module DIV256(clk, rst, slowen);
+module div256(clk,rst, slowen256);
 
-	input clk, rst;
-	output slowen;
+	input clk,rst;
+	output slowen256;
 
-	reg[7:0] counter;
+	reg[7:0] slowen_count;
 
-	always @(posedge clk or posedge rst)
+	always @(posedge clk or posedge rst) 
 	begin
-		if(rst) counter <= 8'b00000000;
-		else counter <= counter+1;
+		if (rst) slowen_count<=8'b00000000;
+		else slowen_count<=slowen_count+1;
 	end
 
-	assign slowen = &counter;
-
+	assign slowen256=&slowen_count;
 endmodule
-	

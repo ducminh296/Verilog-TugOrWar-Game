@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
+// Company: 
+// Engineer: 
 // 
 // Create Date:    18:30:06 03/30/2011 
 // Design Name: 
@@ -98,7 +98,7 @@ end
 //output
 always @(state or speed_right or speed_tie) begin
 	case(state)
-		`WAIT: 			begin speed_finish = 0; speed_exit = 0; speed_led = 7'b0000000; end
+		`WAIT: 			begin speed_finish = 0; speed_exit = 0; speed_led = 7'b0000000;end
 		`count7: 		begin speed_finish = 0; speed_exit = 0; speed_led = 7'b1111111;end
 		`count6: 		begin speed_finish = 0; speed_exit = 0; speed_led = 7'b0111111;end
 		`count5: 		begin speed_finish = 0; speed_exit = 0; speed_led = 7'b0011111;end
@@ -120,6 +120,9 @@ always @(state or speed_right or speed_tie) begin
 
 end
 
-OPP createWINSPEED(speed_finish,clk,rst,winspeed); //create winspeed
-
+OPP createWINSPEED(
+	.sypush(speed_finish),
+	.clk(clk),
+	.rst(rst),
+	.winrnd(winspeed)); //create winspeed
 endmodule

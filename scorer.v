@@ -11,26 +11,7 @@
 //  - a win shows up as either (1 1 1 0 0 0 0) if WL or (0 0 0 0 1 1 1) if WR
 //----------------------------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////////////////
-// Company: DIJIJI
-// Engineer: GROUP 25
-// 
-// Create Date:  
-// Design Name: 
-// Module Name:    SCORER
-// Project Name: 	Group 25
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision:  - File Created
-//
-//////////////////////////////////////////////////////////////////////////////////
-
-module SCORER(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, speed_tie, speed_right, winspeed);
+module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, speed_tie, speed_right, winspeed,isVictory);
 	`define WR  1
 	`define R3  2
     `define R2  3
@@ -40,7 +21,7 @@ module SCORER(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 	`define L2  7
 	`define L3  8
 	`define WL  9 
-	`define ERROR  0
+	`define ERROR_STATE  0
 
 	input clk;		    // input clk 
 	input rst;	// asynchronous reset
@@ -53,11 +34,13 @@ module SCORER(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 	input speed_right;
 	input winspeed;
 	output [6:0] score;	//  MSB 5 [WL L2 L1 0 R1 R2 WR] LSB 0
-    output [6:0] fake_score;	
+   output [6:0] fake_score;	
+	output isVictory;
 	reg [6:0] score;	
 	reg [3:0] state;	// One of WL, WR, L1, L2, L3, R1, R2, R3 or ERROR
 	reg [3:0] nxtstate;	// C/L
 	reg [6:0] fake_score;
+	reg isVictory;
 
 	// SYNCHRONOUS STATE ASSIGNMENT ---------------------------------------------
 	always @(posedge clk or posedge rst)
@@ -71,18 +54,18 @@ module SCORER(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 
     wire mr;            
 	// move right if right pushed properly, or if left pushed improperly
-	assign mr = (right & leds_on & ~fake) | (~right & ~leds_on) | (leds_on & ~right & fake) |(speed_right); //MR if right wins or left loses by pushing too fast, or left pushes in fake state, or fake state
+	assign mr = (right & leds_on & ~fake) | (~right & ~leds_on) | (leds_on & ~right & fake)  |(speed_right); //MR if right wins or left loses by pushing too fast, or left pushes in fake state, or fake state
 
 	always @(state or mr or leds_on or winrnd or tie or fake or winspeed or speed_tie) begin
 		nxtstate = state;
 		
-	  if((winrnd & ~tie )|(winspeed & ~speed_tie)) begin //missing tie code -fixed by adding & ~tie
-		if(leds_on & ~fake) //missing fake play code -fixed by adding ~fake       
+	  if((winrnd & ~tie)|(winspeed & ~speed_tie)) begin //Done: missing tie code ?????
+		if(leds_on & ~fake) //Done:missing fake play code ?????        
 			// Proper pushes (uses favour the loser options)
 				//if in real state
 			case(state)
-			`N:	   if(mr) nxtstate = `R1; else nxtstate=`L1;	
-			`L1:	if(mr) nxtstate = `N; else nxtstate=`L2;
+			`N:	if(mr) nxtstate = `R1; else nxtstate=`L1;	
+			`L1:  if(mr) nxtstate = `N;  else nxtstate=`L2;
 			`L2:	if(mr) nxtstate = `L1; else nxtstate=`L3;
 			`L3:	if(mr) nxtstate = `L1; else nxtstate=`WL;
 			`R1:	if(mr) nxtstate = `R2; else nxtstate=`N;
@@ -90,40 +73,43 @@ module SCORER(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 			`R3:	if(mr) nxtstate = `WR; else nxtstate=`R1; 
 			`WL:	nxtstate = `WL;
 			`WR:	nxtstate = `WR;
-			default: nxtstate = `ERROR;
+			default: nxtstate = `ERROR_STATE;
 			endcase
 		else	            // the leds were off, player jumped the light, OR in fake state
 			case(state)
-			`N:	    if(mr) nxtstate = `L1; else nxtstate = `R1;
-			`L1:	if(mr) nxtstate = `L2; else nxtstate = `N;
-			`L2:	if(mr) nxtstate = `L3; else nxtstate = `L1;
-			`L3:	if(mr) nxtstate = `WL; else nxtstate = `L2;
-			`R1:	if(mr) nxtstate = `N; else nxtstate = `R2;
-			`R2:	if(mr) nxtstate = `R1; else nxtstate = `R3;
+			`N:	if(mr) nxtstate = `R1; else nxtstate=`L1;	
+			`L1:  if(mr) nxtstate = `N;  else nxtstate=`L2;
+			`L2:	if(mr) nxtstate = `L1; else nxtstate=`L3;
+			`L3:	if(mr) nxtstate = `L2; else nxtstate=`WL;
+			`R1:	if(mr) nxtstate = `R2; else nxtstate=`N;
+			`R2:	if(mr) nxtstate = `R3; else nxtstate = `R1;
 			`R3:	if(mr) nxtstate = `WR; else nxtstate=`R2; 
 			`WL:	nxtstate = `WL;
-			`WR:	nxtstate = `WR;	
-			default: nxtstate = `ERROR;
+			`WR:	nxtstate = `WR;
+			default: nxtstate = `ERROR_STATE;
 			endcase
 	  end
   end
 
 
-
+	
+	
     // output logic - what value of 'score' should show based on the internal state
 	always @(state)	
+	begin
+	isVictory=0; //assign isVictory=0 to avoid generate latch
 		case(state)
-		`N:	    begin score = 7'b0001000; fake_score = 7'b0001001; end
+		`N:	begin score = 7'b0001000; fake_score = 7'b0001001; end
 		`L1:	begin score = 7'b0010000; fake_score = 7'b0010010; end
-		`L2:	begin score = 7'b0100000; fake_score = 7'b0100100; end
+		`L2:	begin score = 7'b0100000; fake_score = 7'b0100001; end
 		`L3:	begin score = 7'b1000000; fake_score = 7'b1001000; end
-		`R1:	begin score = 7'b0000100; fake_score = 7'b0100100; end
-		`R2:	begin score = 7'b0000010; fake_score = 7'b0010010; end
-		`R3:	begin score = 7'b0000001; fake_score = 7'b0001001; end
-		`WL:	begin score = 7'b1110000; fake_score = 7'b1001000; end
-		`WR:	begin score = 7'b0000111; fake_score = 7'b0001001; end
+		`R1:	begin score = 7'b0000100; fake_score = 7'b0100010; end
+		`R2:	begin score = 7'b0000010; fake_score = 7'b0001010; end
+		`R3:	begin score = 7'b0000001; fake_score = 7'b0101000; end
+		`WL:	begin score = 7'b1110000; fake_score = 7'b0010001; isVictory=1; end
+		`WR:	begin score = 7'b0000111; fake_score = 7'b1000001; isVictory=1; end
 		default: begin score = 7'b1010101; fake_score = 7'b0001001; end 
 		endcase
-
+	end
 endmodule
 
