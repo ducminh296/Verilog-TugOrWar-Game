@@ -18,15 +18,16 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module led_mux(score, led_control, fake_score, speed_led, leds_out);
+module led_mux(score, led_control, fake_score, speed_led, leds_out, victory_led);
 
     input wire [6:0] score; 
 	 input wire [6:0] fake_score;
 	 input wire [6:0] speed_led;
 	 input wire [2:0] led_control;
+	 input wire [6:0] victory_led;
     output reg [6:0] leds_out;
  
-always @(led_control or score or fake_score or speed_led) begin
+always @(led_control or score or fake_score or speed_led or victory_led) begin
 //score output by scorer controls which LEDs are on, as dictated by led_control
 //states are 00 = display reset code, 01 = all leds off (dark), 11 = display score
 	case(led_control)
@@ -36,6 +37,7 @@ always @(led_control or score or fake_score or speed_led) begin
 		3'b011: leds_out = score;//displaying score in play state;
 		3'b100: leds_out = fake_score;//display fake round score
 		3'b110: leds_out = speed_led;//SPEED SOMETHING OR ANOTHER!
+		3'b111: leds_out = victory_led; // show victory led when 
 		//2 unused states
 		default: leds_out = 7'b0000000;
 	endcase

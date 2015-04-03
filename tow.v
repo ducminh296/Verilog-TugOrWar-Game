@@ -8,12 +8,13 @@ module tow(
     output [6:0] Led
     );
 //Complete wire signals needed below ???
-	wire 	clk,clear,push,tie,right,sypush,winrnd,leds_on,fake,isVictory;
+	wire 	clk,clear,push,tie,right,sypush,winrnd,leds_on,fake,Victory,Victory_sync,wingame;
 	wire [6:0] score;
 	wire [6:0] fake_score;
 	wire speed_tie,speed_right,winspeed;
 	wire [2:0] led_control;
 	wire [6:0] speed_led;
+	wire [6:0] victory_led;
 	wire speed_round,speed_exit,slowen,slowen1024,slowen64,rand,randFake,randSpeed;
 
 //Slower Clock from 100Mhz to 500Hz -Given DO NOT remove 
@@ -29,14 +30,24 @@ PBL createPBL(
 	.pbr(pbr),
 	.rst(rst),
 	.clr(clear));
-SYNC createSYNC(
+SYNC sync_0(
 	.sypush(sypush),
 	.push(push),
 	.clk(clk),
 	.rst(rst));
-OPP createOPP(
+OPP opp_0(
 	.winrnd(winrnd),
 	.sypush(sypush),
+	.clk(clk),
+	.rst(rst));
+SYNC sync_1(
+	.sypush(Victory_sync),
+	.push(Victory),
+	.clk(clk),
+	.rst(rst));
+OPP opp_1(
+	.winrnd(wingame),
+	.sypush(Victory_sync),
 	.clk(clk),
 	.rst(rst));
 //----------------------------------------------------------------------
@@ -54,13 +65,23 @@ scorer createScorer(
 	.speed_tie(speed_tie),
 	.speed_right(speed_right),
 	.winspeed(winspeed),
-	.isVictory(isVictory));
+	.Victory(Victory));
+	
+CheerVictory cheerVictory(
+	.wingame(wingame),
+	.score(score),
+	.slowen(slowen),
+	.victory_led(victory_led),
+	.rst(rst));
+	
 led_mux createLed_Mux(
 	.score(score),
 	.led_control(led_control),
 	.fake_score(fake_score),
 	.speed_led(speed_led),
-	.leds_out(Led));
+	.leds_out(Led),
+	.victory_led(victory_led));
+	
 pushCounter createpushCounter(
 	.pbl(pbl),
 	.pbr(pbr),
@@ -105,7 +126,7 @@ mc createMASTERCONTROLLER(
 	.clear(clear),
 	.led_control(led_control), 
 	.fake(fake),
-	.isVictory(isVictory));
+	.Victory(Victory));
 speed_controller speed_controller(
 	.clk(clk),
 	.rst(rst),

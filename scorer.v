@@ -11,7 +11,7 @@
 //  - a win shows up as either (1 1 1 0 0 0 0) if WL or (0 0 0 0 1 1 1) if WR
 //----------------------------------------------------------------------------------------
 
-module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, speed_tie, speed_right, winspeed,isVictory);
+module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, speed_tie, speed_right, winspeed, Victory);
 	`define WR  1
 	`define R3  2
     `define R2  3
@@ -35,13 +35,13 @@ module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 	input winspeed;
 	output [6:0] score;	//  MSB 5 [WL L2 L1 0 R1 R2 WR] LSB 0
    output [6:0] fake_score;	
-	output isVictory;
+	output Victory;
 	reg [6:0] score;	
 	reg [3:0] state;	// One of WL, WR, L1, L2, L3, R1, R2, R3 or ERROR
 	reg [3:0] nxtstate;	// C/L
 	reg [6:0] fake_score;
-	reg isVictory;
-
+	reg Victory;
+	
 	// SYNCHRONOUS STATE ASSIGNMENT ---------------------------------------------
 	always @(posedge clk or posedge rst)
    		if (rst) state <= `N;
@@ -97,7 +97,7 @@ module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
     // output logic - what value of 'score' should show based on the internal state
 	always @(state)	
 	begin
-	isVictory=0; //assign isVictory=0 to avoid generate latch
+	Victory=0; //assign isVictory=0 to avoid generate latch
 		case(state)
 		`N:	begin score = 7'b0001000; fake_score = 7'b0001001; end
 		`L1:	begin score = 7'b0010000; fake_score = 7'b0010010; end
@@ -106,10 +106,11 @@ module scorer(winrnd, right, leds_on, tie, clk, rst, fake, score, fake_score, sp
 		`R1:	begin score = 7'b0000100; fake_score = 7'b0100010; end
 		`R2:	begin score = 7'b0000010; fake_score = 7'b0001010; end
 		`R3:	begin score = 7'b0000001; fake_score = 7'b0101000; end
-		`WL:	begin score = 7'b1110000; fake_score = 7'b0010001; isVictory=1; end
-		`WR:	begin score = 7'b0000111; fake_score = 7'b1000001; isVictory=1; end
+		`WL:	begin score = 7'b1110000; fake_score = 7'b0010001; Victory=1; end
+		`WR:	begin score = 7'b0000111; fake_score = 7'b1000001; Victory=1; end
 		default: begin score = 7'b1010101; fake_score = 7'b0001001; end 
 		endcase
 	end
+	
 endmodule
 

@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module mc(winrnd,slowen,rand, randFake, randSpeed,clk,rst,speed_exit,winspeed,speed_round,leds_on,clear,led_control,fake,isVictory);
+module mc(winrnd,slowen,rand, randFake, randSpeed,clk,rst,speed_exit,winspeed,speed_round,leds_on,clear,led_control,fake, Victory);
 
 input winrnd;
 input slowen;
@@ -29,7 +29,7 @@ input randFake; //for fake state
 input randSpeed; //for speed round
 input winspeed; //turn off speed_round\
 input speed_exit;
-input isVictory; // tell the mc if someone won the whole game
+input Victory; // tell the mc if someone won the whole game
 output reg speed_round;
 output reg leds_on;
 output reg clear;
@@ -45,16 +45,18 @@ always @(posedge clk or posedge rst) begin
 	if(rst) state <= reset;
 	else state <= next_state;
 end
+
 //*********CREATING FAKE timeout*****************//
 always @(posedge slowen or posedge rst) begin
  //Complete code here so that fake_timeout is high after 2 seconds ??????
- if (rst | ~fake) slowen_count=2'b00;
- else slowen_count=slowen_count+ 2'b01;
+ if (rst | ~fake) slowen_count<=0;
+ else slowen_count<=slowen_count + 1;
 end
+
 assign fake_timeout = &slowen_count;
 //******************************************//
 
-always @(state or winrnd or slowen or rand or rst or randFake or fake_timeout or winspeed or randSpeed or speed_exit)begin //some signals missing in always block sensitivity list  ???????
+always @(*) begin //some signals missing in always block sensitivity list  ???????
 	case(state)
 
 	//fill in 10 states ???????????
@@ -73,7 +75,7 @@ always @(state or winrnd or slowen or rand or rst or randFake or fake_timeout or
 				end
 						
 		dark: 	begin
-					if (isVictory) next_state=victory;
+					if (Victory) next_state=victory;
 					else if (slowen & rand) next_state=play;
 					else if (slowen & randFake & ~rand) next_state=fake_play;
 					else if (slowen & randSpeed & ~rand & ~randFake) next_state=speed_play;
@@ -130,6 +132,7 @@ always @(state)
 		// 011 - show score!
 		// 100 - show fake score
 		// 110 - display speed score 
+		// 111 - display cheer Victory LED
 		
 		
 		//Complete Output for each for 10 state ??????
@@ -153,7 +156,7 @@ always @(state)
 
 		speed_play_display: begin leds_on = 1; clear = 1; led_control = 3'b110; fake = 0; speed_round = 0; end
 		
-		victory: begin leds_on=1; clear=1; led_control=3'b011; fake=0; speed_round=0; end
+		victory: begin leds_on=1; clear=1; led_control=3'b111; fake=0; speed_round=0; end
 
 		ERROR:   begin leds_on = 1; clear = 1; led_control = 3'b001; fake = 0; speed_round = 0; end
 		
