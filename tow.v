@@ -5,7 +5,10 @@ module tow(
     input pbl,
     input CLK_I,
     input rst,
-    output [6:0] Led
+    output [6:0] Led,
+	 output audio,
+	 output gain,
+	 output notshutdown
     );
 //Complete wire signals needed below ???
 	wire 	clk,clear,push,tie,right,sypush,winrnd,leds_on,fake,Victory,Victory_sync,wingame;
@@ -140,4 +143,14 @@ speed_controller speed_controller(
 	.winspeed(winspeed),
 	.speed_exit(speed_exit));
 
+SoundController sound_controller(
+	.clk(CLK_I),
+	.rst(rst),
+	.winrnd(winrnd),
+	.wingame(wingame),
+	.audio(audio),
+	.gain(gain),
+	.slowen(slowen),
+	.notshutdown(notshutdown));
+	
 endmodule

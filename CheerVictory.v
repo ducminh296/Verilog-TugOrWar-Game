@@ -25,11 +25,11 @@ module CheerVictory(slowen, score, wingame, victory_led, rst);
 	input rst;
 	output reg [6:0] victory_led;
 	reg right_vic;
-	reg [2:0] count;
+	reg [3:0] count;
 	
 	always @(posedge slowen)
 	begin
-		if (rst| wingame |count==7) count<=0;
+		if (rst| wingame |count==10) count<=0;
 		else count<= count+1;
 		
 		if (score==7'b0000111) right_vic<=1;
@@ -60,21 +60,35 @@ module CheerVictory(slowen, score, wingame, victory_led, rst);
 				end
 			
 			4: begin
-					if (right_vic) victory_led = 7'b0001000;
-					else victory_led = 7'b0001000;
+					if (right_vic) victory_led = 7'b1000000;
+					else victory_led = 7'b0000001;
 				end
 				
 			5: begin
+					if (right_vic) victory_led = 7'b0100000;
+					else victory_led = 7'b0000010;
+				end
+				
+			6: begin
+					if (right_vic) victory_led = 7'b0010000;
+					else victory_led = 7'b0000100;
+				end
+				
+			7: begin
+					if (right_vic) victory_led = 7'b0001000;
+					else victory_led = 7'b0001000;
+				end
+			8: begin
 					if (right_vic) victory_led = 7'b0000100;
 					else victory_led = 7'b0010000;
 				end
 				
-			6: begin
+			9: begin
 					if (right_vic) victory_led = 7'b0000010;
 					else victory_led = 7'b0100000;
 				end
 				
-			7: begin
+			10: begin
 					if (right_vic) victory_led = 7'b0000001;
 					else victory_led = 7'b1000000;
 				end
