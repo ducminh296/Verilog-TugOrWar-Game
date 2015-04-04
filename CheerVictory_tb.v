@@ -51,7 +51,7 @@ module CheerVictory_tb;
 	
 	SYNC sync(.sypush(SyisVictory),.push(isVictory),.clk(clk),.rst(rst));
 	OPP opp(.winrnd(wingame),.sypush(SyisVictory),.clk(clk),.rst(rst));
-	CheerVictory chearVictory(.slowen(clk),.score(score),.wingame(wingame),.victory_led(victory_led),.rst(rst));
+	CheerVictory chearVictory(.slowen512(clk),.score(score),.wingame(wingame),.victory_led(victory_led),.rst(rst));
 	
 
 endmodule

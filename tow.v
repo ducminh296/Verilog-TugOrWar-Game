@@ -18,7 +18,7 @@ module tow(
 	wire [2:0] led_control;
 	wire [6:0] speed_led;
 	wire [6:0] victory_led;
-	wire speed_round,speed_exit,slowen,slowen1024,slowen64,rand,randFake,randSpeed;
+	wire speed_round,speed_exit,slowen,slowen1024,slowen64,slowen512,rand,randFake,randSpeed;
 
 //Slower Clock from 100Mhz to 500Hz -Given DO NOT remove 
 clk_div createCLKdivide(.CLK_I(CLK_I),.rst(rst), .clk(clk));
@@ -73,7 +73,7 @@ scorer createScorer(
 CheerVictory cheerVictory(
 	.wingame(wingame),
 	.score(score),
-	.slowen(slowen),
+	.slowen512(slowen512),
 	.victory_led(victory_led),
 	.rst(rst));
 	
@@ -100,14 +100,22 @@ div256 createSlowen(
 	.clk(clk),
 	.rst(rst),
 	.slowen256(slowen));
+	
+div512 createSlowen512(
+	.clk(clk),
+	.rst(rst),
+	.slowen512(slowen512));
+	
 div1024 createSlowen1024(
 	.clk(clk),
 	.rst(rst),
 	.slowen1024(slowen1024));
+	
 div64 createSlowen64(
 	.clk(clk),
 	.rst(rst),
 	.slowen64(slowen64));
+	
 lfsr createRAND(
 	.clk(clk),
 	.rst(rst),
@@ -147,6 +155,7 @@ SoundController sound_controller(
 	.clk(CLK_I),
 	.rst(rst),
 	.winrnd(winrnd),
+	.speed_round(speed_round),
 	.wingame(wingame),
 	.audio(audio),
 	.gain(gain),

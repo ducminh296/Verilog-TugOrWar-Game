@@ -9,7 +9,7 @@ module div1024(clk,rst, slowen1024);
 
 	always @(posedge clk or posedge rst) 
 	begin
-		if (rst) slowen_count<=9'b000000000;
+		if (rst) slowen_count<=10'b0000000000;
 		else slowen_count<=slowen_count+1;
 	end
 
