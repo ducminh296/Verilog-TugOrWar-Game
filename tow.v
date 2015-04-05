@@ -73,7 +73,7 @@ scorer createScorer(
 CheerVictory cheerVictory(
 	.wingame(wingame),
 	.score(score),
-	.slowen512(slowen512),
+	.slowen(slowen64),
 	.victory_led(victory_led),
 	.rst(rst));
 	
@@ -100,11 +100,6 @@ div256 createSlowen(
 	.clk(clk),
 	.rst(rst),
 	.slowen256(slowen));
-	
-div512 createSlowen512(
-	.clk(clk),
-	.rst(rst),
-	.slowen512(slowen512));
 	
 div1024 createSlowen1024(
 	.clk(clk),
@@ -152,14 +147,16 @@ speed_controller speed_controller(
 	.speed_exit(speed_exit));
 
 SoundController sound_controller(
-	.clk(CLK_I),
-	.rst(rst),
 	.winrnd(winrnd),
+	.push(push),
+	.right(right),
 	.speed_round(speed_round),
-	.wingame(wingame),
+	.winspeed(winspeed),
+	.slowen(slowen),
+	.clk(CLK_I),
 	.audio(audio),
 	.gain(gain),
-	.slowen(slowen),
-	.notshutdown(notshutdown));
-	
+	.notshutdown(notshutdown),
+	.rst(rst));
+
 endmodule

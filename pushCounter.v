@@ -36,7 +36,7 @@ assign DW=DC_L & DC_R;
 SYNC create_pblSync3(pbl_sync,pblSync3,clk,rst);
 SYNC create_pbrSync3(pbr_sync,pbrSync3,clk,rst);
 
-always @(DW) begin
+always @(*) begin
    if (DW) begin
        pblSync3=pblSync2;
 		 pbrSync3=pbrSync2;

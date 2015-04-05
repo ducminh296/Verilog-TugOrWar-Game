@@ -18,25 +18,24 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CheerVictory(slowen512, score, wingame, victory_led, rst);
+module CheerVictory(slowen, score, wingame, victory_led, rst);
 
-	input wingame, slowen512;
+	input wingame, slowen;
 	input wire [6:0] score;
 	input rst;
 	output reg [6:0] victory_led;
-	reg right_vic;
-	reg [3:0] count;
+	wire right_vic;
+	reg [3:0] count=0;
 	
-	always @(posedge slowen512)
+	assign right_vic=score[2]&score[1]&score[0];
+	
+	always @(posedge slowen)
 	begin
-		if (rst| wingame |count==12) count=0;
-		else count= count+1;
-		
-		if (score==7'b0000111) right_vic=1;
-		else right_vic=0;
+		if (rst| wingame |count==12) count<=0;
+		else count<= count+1;
 	end
 	
-	always @(count or right_vic or score)
+	always @(count)
 	begin
 		case (count)
 			0: begin

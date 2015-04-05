@@ -20,14 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 module SoundController_tb();
 	
-	reg winrnd,wingame,sypush,clk,rst,speed_round,winspeed;
+	reg winrnd,wingame,push,right,sypush,clk,rst,speed_round,winspeed;
 	wire gain,audio,notshutdown,slowen;
 	
 	always #20 clk <= ~clk;
 	div256 Clk_div(.clk(clk),.rst(rst),.slowen256(slowen));
 	
 	initial begin
-		clk=0;rst=0;sypush=0;speed_round=0;winspeed=0;
+		clk=0;rst=0;sypush=0;speed_round=0;winspeed=0;push=0;right=0;
 		
 		@(posedge clk);
 		#5 rst=1;
@@ -43,14 +43,14 @@ module SoundController_tb();
 		
 		
 		@(posedge clk);
-		#5 speed_round=1;
+		#5 wingame=1;
 		
+		#60
 		@(posedge clk);
-		#5 speed_round=0;
+		wingame=0;
 		
-		#2048 winspeed=1;
 		
 	end
 	
-	SoundController soundcontroller(.winrnd(winrnd),.speed_round(speed_round),.winspeed(winspeed), .wingame(wingame), .clk(clk),.audio(audio),.gain(gain),.notshutdown(notshutdown),.rst(rst),.slowen(slowen));
+	SoundController soundcontroller(.winrnd(winrnd),.push(push),.right(right),.speed_round(speed_round),.winspeed(winspeed), .wingame(wingame), .clk(clk),.audio(audio),.gain(gain),.notshutdown(notshutdown),.rst(rst),.slowen(slowen));
 endmodule

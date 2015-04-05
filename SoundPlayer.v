@@ -26,23 +26,38 @@ module SoundPlayer(soundType, clk, rst, audio);
 	reg audio=0;
 	
 	parameter note_A = 100000000/512/2, note_D = 100000000/384/2, note_C = 100000000/431/2, note_G =100000000/271/2;
-	reg [1:0] div = 2;
 	
+	reg [1:0] div;
 	reg [25:0] tone;
 	reg [18:0] counter;
+	reg [18:0] note;
 	
 	always @(soundType)
 	begin
-		/* 0: Right button pushed; 
-			1: Left button pushed
-			2: SpeedRound sound;
-			3: Wingame sound;
+		/* 0: right_push_sound; div=1; note=note_A
+			1: left_push_sound; div=1; note=note_D
+			2: speed_round_sound; div=2; note=note_C
 		*/
+		note<=0;
+		div<=2;
 		case (soundType)
-			0: div <= 1;
-			1: div <= 1;
-			2: div <= 2;
-			default div <=1;
+			0: begin
+					div <= 1;
+					note <= note_A;
+				end
+			1: begin
+					div <= 1;
+					note <= note_D;
+				end
+			2: begin
+					div <= 2;
+					note <= note_C;
+				end
+			default: 
+				begin
+					div <= 1;
+					note <= note_A;
+				end
 		endcase
 	end
 	
@@ -52,7 +67,7 @@ module SoundPlayer(soundType, clk, rst, audio);
 		if (rst) tone<=0;
 		else tone <=tone+1;
 		
-		if(counter==0 |rst) counter <= (tone[25] ? note_A-1 : note_A/div -1); 
+		if(counter==0 |rst) counter <= (tone[25] ? note-1 : note/div -1); 
 		else counter <= counter-1;
 	end
 	
